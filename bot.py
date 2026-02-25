@@ -197,7 +197,7 @@ async def process_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text:
         else:
             await thinking_msg.edit_text(result.get("reply", "Понял тебя!"))
     except Exception as e:
-        await thinking_msg.edit_text(f"❌ Что-то пошло не так: {str(e)}")
+        await thinking_msg.edit_text(f"❌ Ошибка: {str(e)[:500]}")
 
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await process_text(update, context, update.message.text)
