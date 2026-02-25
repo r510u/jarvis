@@ -128,7 +128,13 @@ def parse_ai_response(user_message: str) -> dict:
     )
     raw = response.choices[0].message.content.strip()
     raw = re.sub(r"```[a-z]*\n?", "", raw).replace("```", "").strip()
-    return json.loads(raw)
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            return json.loads(match.group())
+        raise Exception(f'Не смог распарсить: {raw}')
 
 async def transcribe_voice(file_path: str) -> str:
     with open(file_path, "rb") as f:
