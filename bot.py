@@ -85,14 +85,19 @@ SYSTEM = """Ты — Жарвис, помощник менеджера по пр
 def ask_gpt(text):
     now = datetime.now()
     system = SYSTEM.format(time=now.strftime("%H:%M"), date=now.strftime("%d.%m.%Y %A"))
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role":"system","content":system},{"role":"user","content":text}],
-        response_format={"type":"json_object"}
-    )
-    raw = resp.choices[0].message.content.strip()
-    print(f"GPT raw: {raw}")  # для дебага в логах
-    return json.loads(raw)
+    print(f"Вызываю GPT с текстом: {text}")
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role":"system","content":system},{"role":"user","content":text}],
+            response_format={"type":"json_object"}
+        )
+        raw = resp.choices[0].message.content.strip()
+        print(f"GPT raw: {raw}")
+        return json.loads(raw)
+    except Exception as e:
+        print(f"GPT ошибка: {e}")
+        raise
 
 async def transcribe(path):
     with open(path, "rb") as f:
